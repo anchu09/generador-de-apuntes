@@ -27,12 +27,10 @@ pip install -r requirements.txt
 ### Configuración
 
 1. Ajusta los parámetros en `config.yaml` según tus necesidades
-2. **Configura tu API key de OpenAI** (recomendado usar variable de entorno):
+2. Configura tu API key de OpenAI como variable de entorno:
    ```bash
    export OPENAI_API_KEY="tu-api-key-aqui"
    ```
-   
-   **Nota de seguridad**: El archivo `config.yaml` no incluye API keys por defecto. Es más seguro usar variables de entorno en lugar de escribir la clave directamente en el archivo de configuración.
 
 ## Uso
 
@@ -119,10 +117,6 @@ El proceso genera:
 - El procesamiento puede tardar dependiendo de la duración del video
 - Se requiere conexión a internet para usar la API de OpenAI
 - Los costos de la API dependen del modelo y la cantidad de diapositivas
-
-## Seguridad
-
-⚠️ **Importante**: Nunca subas tus API keys a un repositorio público. El proyecto está configurado para usar variables de entorno por defecto. Si necesitas usar una API key directamente en `config.yaml`, asegúrate de que el archivo esté en `.gitignore` o usa un archivo de configuración local separado.
 
 ## Desarrollo
 
