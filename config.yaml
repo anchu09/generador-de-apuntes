@@ -1,0 +1,148 @@
+# Configuración del Generador de Apuntes Automático
+
+# Parámetros de detección de diapositivas
+slide_detection:
+  min_slide_duration: 5.0 # Segundos mínimos que debe estar una diapositiva
+  pixel_diff_threshold: 0.15 # Umbral de diferencia de píxeles (0-1)
+  structural_change_threshold: 0.3 # Umbral de cambio estructural
+  edge_detection_weight: 0.3 # Peso para detección de bordes
+  pixel_diff_weight: 0.4 # Peso para diferencia de píxeles
+  structural_weight: 0.3 # Peso para cambios estructurales
+  overall_change_threshold: 0.5 # Umbral total de probabilidad de cambio
+
+# Configuración de la cámara del profesor
+camera:
+  position: 0 # 0 = no hay cámara, 1-9 = posición en grid 3x3
+  ignore_margins: true # Ignorar márgenes negros estáticos
+  margin_tolerance: 0.05 # Tolerancia para márgenes (5% del frame)
+
+# Configuración de extracción
+extraction:
+  output_dir: "output"
+  assets_dir: "assets"
+  frames_per_second: 1 # FPS para análisis de frames
+  image_format: "png" # Formato de las diapositivas extraídas
+
+# Configuración de transcripción
+transcription:
+  language: "es" # Idioma del audio
+  model: "whisper" # Modelo a usar (whisper, etc.)
+  output_format: "text" # Formato de salida
+
+# Configuración de LLM
+llm:
+  provider: "openai" # openai, anthropic, etc.
+  model: "gpt-4o" # Modelo a usar (gpt-4o es el más avanzado disponible actualmente. Si quieres probar gpt-5, cámbialo aquí)
+  api_key_env: "OPENAI_API_KEY" # Variable de entorno con la API key (fallback si no se usa api_key)
+  # api_key: "" # API key directa (opcional, tiene prioridad sobre api_key_env)
+  # NOTA: Para usar una API key, descomenta la línea anterior y añade tu clave
+  # O mejor aún, usa la variable de entorno OPENAI_API_KEY para mayor seguridad
+  temperature: 0.7
+  max_tokens: 500
+  context_slides_before: 2 # Número de diapositivas anteriores a incluir como contexto
+  context_slides_after: 1 # Número de diapositivas siguientes a incluir como contexto
+  system_prompt: |
+    Eres un asistente especializado en generar resúmenes educativos concisos para clases de astrofísica.
+
+    Tu tarea es analizar una diapositiva de clase y la transcripción automática de lo que dijo el profesor,
+    y generar un resumen SINTÉTICO y CONCISO que capture SOLO los puntos clave y conceptos esenciales.
+
+    REGLAS IMPORTANTES:
+    1. NO hagas un parafraseo literal de la transcripción. En lugar de repetir lo que dijo el profesor,
+       sintetiza y extrae los conceptos clave.
+    2. Sé CONCISO: prioriza la información esencial sobre los detalles. El resumen debe ser útil para
+       estudio rápido, no una transcripción completa.
+    3. Estructura el resumen de forma clara: usa conceptos principales, relaciones causa-efecto, y
+       conclusiones importantes, evitando repeticiones y rodeos.
+    4. La transcripción puede contener errores, especialmente en:
+       - Nombres propios (científicos, planetas, objetos astronómicos, etc.)
+       - Términos técnicos y conceptos específicos de astrofísica
+       - Palabras clave científicas
+    5. Si encuentras algo en la transcripción que no parece bien escrito o no tiene sentido, infiere
+       lo que el profesor quería decir basándote en:
+       - El contenido de la diapositiva
+       - El contexto científico de la explicación
+       - Tu conocimiento de astrofísica
+       - El contexto de las diapositivas anteriores y siguientes (si se proporciona)
+
+    El objetivo es crear un resumen que sea una SÍNTESIS útil para el estudio, no una versión
+    abreviada de la transcripción. Piensa en qué información sería realmente importante para alguien
+    que estudia este tema.
+
+# Configuración de generación de PowerPoint/PDF
+powerpoint:
+  slide_width: 1920 # Ancho de la diapositiva original (píxeles)
+  slide_height: 1080 # Alto de la diapositiva original (píxeles)
+  output_format: "pdf" # Formato de salida (pdf o pptx)
+  font_size_transcription: 12 # Tamaño de fuente base para transcripción (se ajusta automáticamente)
+  font_size_summary: 14 # Tamaño de fuente para resumen
+  margin: 20 # Margen en píxeles
+  # Configuración de formateo automático de transcripción
+  auto_font_size: true # Ajustar tamaño de fuente automáticamente según cantidad de texto
+  min_font_size: 14 # Tamaño mínimo de fuente (píxeles)
+  max_font_size: 36 # Tamaño máximo de fuente (píxeles)
+  paragraph_spacing: 8 # Espaciado entre párrafos (píxeles)
+  line_spacing: 1.2 # Espaciado entre líneas (multiplicador)
+
+# Configuración de procesamiento de video
+video:
+  codec: "h264"
+  quality: "high"
+
+# Configuración de ventanas de video (nuevo enfoque)
+video_windows:
+  window_duration: 2.0 # Duración de cada ventana en segundos
+  frames_to_average: 5 # Número de frames a promediar para robustez (con GIFs)
+
+# Configuración del modo de procesamiento
+processing:
+  mode: "video_only" # Opciones: pdf_matching, video_only
+  # test_fraction: 0.25 # Procesar solo el 25% del video para pruebas rápidas (usar 1.0 para todo el video)
+  # COMENTADO: Procesando video completo
+
+# Configuración para fusionar micro segmentos contiguos (modo video_only)
+micro_merge:
+  enabled: true
+  window_threshold: 20 # Segm. con menos de 20 ventanas se consideran micro
+  max_total_windows: 50 # Máximo de ventanas sumadas en un bloque fusionado
+  max_total_duration: 120.0 # Límite de duración (segundos) por bloque fusionado
+  min_segments: 2 # Mínimo de segmentos contiguos para fusionar
+  collage_max_columns: 3 # Máximo de columnas en el collage resultante
+  collage_tile_width: 1280 # Ancho de cada mosaico en el collage (aumentado para mejor calidad)
+  collage_tile_height: 720 # Alto de cada mosaico (aumentado para mejor calidad)
+  collage_padding: 8 # Separación entre mosaicos
+  collage_background_color: [255, 255, 255] # Fondo del collage
+
+# Configuración de agrupación de frames (modo video_only)
+frame_grouping:
+  similarity_threshold: 0.01 # Diferencia máxima (0-1) para considerar frames similares
+  downscale_width: 320 # Ancho al que se redimensionan los frames para comparación
+  blur_kernel_size: 5 # Tamaño de kernel (impar) para desenfoque gaussiano
+  min_windows: 2 # Mínimo de ventanas consecutivas para crear un segmento
+  min_duration: 4.0 # Duración mínima en segundos para crear un segmento
+  save_frame_format: "jpg" # Formato para guardar el frame representativo
+
+# Configuración de matching de diapositivas
+slide_matching:
+  use_histogram: true # Usar comparación de histogramas
+  use_structural: true # Usar comparación estructural (bordes)
+  use_features: true # Usar detección de características (ORB)
+  histogram_weight: 0.3 # Peso para histogramas
+  structural_weight: 0.4 # Peso para comparación estructural
+  features_weight: 0.3 # Peso para características
+  min_similarity_threshold: 0.3 # Umbral mínimo de similitud (0-1)
+  # Matching secuencial robusto
+  use_temporal_restrictions: true # Mantener el orden natural de las diapositivas
+  retrocess_threshold: 0.65 # Umbral de retrocesos (legacy)
+  forward_jump_threshold: 0.75 # Umbral para saltos grandes hacia adelante
+  max_normal_jump: 5 # Máximo salto permitido en modo legacy
+  switch_margin: 0.08 # Bonus por permanecer en la misma diapositiva
+  max_forward_jump: 4 # Máximo número de diapositivas que se pueden saltar en el alineamiento
+  jump_penalty: 0.18 # Penalización acumulada por cada salto de diapositiva
+  enable_temporal_smoothing: true # Suavizado temporal opcional
+  temporal_smoothing_window: 10 # Ventanas para suavizado
+
+# Configuración de procesamiento de PDF
+pdf:
+  dpi: 200 # Resolución para convertir PDF a imágenes
+

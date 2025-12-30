@@ -1,0 +1,31 @@
+# Dependencias del proyecto
+
+# Procesamiento de video e imágenes
+opencv-python>=4.8.0
+numpy>=1.24.0
+Pillow>=10.0.0
+
+# Transcripción de audio
+openai-whisper>=20231117
+
+# LLM
+openai>=1.0.0
+
+# Generación de PowerPoint
+python-pptx>=0.6.21
+
+# Procesamiento de datos
+pandas>=2.0.0
+
+# Configuración
+PyYAML>=6.0
+
+# Procesamiento de PDF
+pdf2image>=1.16.0
+
+# Procesamiento de audio (para ffmpeg)
+# Nota: ffmpeg debe estar instalado en el sistema
+# macOS: brew install ffmpeg
+# También necesitas poppler para pdf2image:
+# macOS: brew install poppler
+
